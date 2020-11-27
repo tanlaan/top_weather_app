@@ -1,1 +1,1 @@
-console.log("yay!");
+(()=>{"use strict";console.log(function(e,...t){try{if("city"===e)return function(e){try{if(0===e.length)throw new Error("Needed values for City Request not passsed.");if(e.length>3)throw new Error("Too many values for City Request passed.");return"api.openweathermap.org/data/2.5/weather?q="+e.reduce(((e,t)=>""===e?e+t:e+","+t),"")+"&appid=09d94b3ecf354f2c118344d82e6361ba"}catch(e){return console.log(e),""}}(t);throw new Error("No matching endpoint of that type.")}catch(e){return console.log(e),""}}("city","Vancouver","Washington"))})();
