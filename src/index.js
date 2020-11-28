@@ -1,3 +1,4 @@
-import { makeRequest } from "./api"
+import { makeRequest, getWeatherData } from "./api"
 
-console.log(makeRequest('city', 'Vancouver', 'Washington'))
+const request = makeRequest('city', 'Vancouver', 'Washington')
+let weather = getWeatherData(request).then((w) => console.log(w))
