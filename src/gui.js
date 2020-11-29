@@ -1,49 +1,55 @@
-import { kelvinToC, kelvinToF } from './temperature'
+import { getUnitFunction } from './unit'
+import { getModal } from './modal'
+import { getLocationForm } from './form'
+import { makeRequest, getWeatherData } from "./api"
 
-export function renderWeatherModal(weather, location, unit = 'f' ) {
-    console.log(weather)
-    _removeChildren(location)
-    let conversion = getUnitFunction(unit)    
-
-    let container = document.createElement('div')
-    container.setAttribute('id', 'weather-modal')
-
-    let title = document.createElement('h1')
-    title.textContent = weather.type
-    container.appendChild(title)
-
-    let subtitle = document.createElement('h2')
-    subtitle.textContent = weather.desc
-    container.appendChild(subtitle)
-
-    let dataContainer = document.createElement('div')
-    dataContainer.setAttribute('id', 'weather-data')
-    container.appendChild(dataContainer)
-
-    let data = document.createElement('p')
-    let dataString = ''
-    dataString += `The current temperature is ${conversion(weather.temp)}°.<br>`
-    dataString += `It feels like ${conversion(weather.feels_like)}° though.<br>`
-    dataString += `It will get up to ${conversion(weather.temp_max)}° today.<br>`
-    dataString += `While also getting down to ${conversion(weather.temp_min)}°.<br>`
-    data.innerHTML = dataString
-    dataContainer.appendChild(data)
-
-    location.appendChild(container)
+export function renderPage(location) {
+    const main = document.querySelector('main')
+    renderLocationForm(main)
 }
 
-function getUnitFunction(unit) {
-    try {
-        if (unit === 'c') {
-            return kelvinToC
-        } else if (unit === 'f') {
-            return kelvinToF
-        } else {
-            throw new Error('Unknown unit string passed.')
-        }
+export function renderWeatherModal(weather, unit = 'f' ) {
+    let currentModal = document.getElementById('weather-modal')
+    let location
+    if (currentModal) {
+        _removeChildren(currentModal)
+        location = currentModal
+    } else {
+        location = document.querySelector('main')
     }
-    catch (err) {
-        console.log(err)
+    console.log(weather)
+    const conversion = getUnitFunction(unit)   
+    const modal = getModal(weather, conversion)
+    location.appendChild(modal)
+}
+
+export function renderLocationForm(location) {    
+    const form = getLocationForm()
+    location.appendChild(form)
+    const submit = document.getElementById('form-submit')
+    submit.addEventListener('click', submitClickHandler)
+}
+
+function submitClickHandler(e) {
+    const form = e.currentTarget.parentNode
+    // get information for request
+    const endpoint = 'city'
+    const city = form.city.value
+    const state = form.state.value
+    const country = form.country.value
+    if (city === '') {
+        alert('You need a city name.')
+    } else if (state != '' && country === '') {
+        alert('You need a country code.')
+    } else {
+        const request = makeRequest(endpoint, city, state, country)
+        getWeatherData(request)
+        .then((weather) => {
+            renderWeatherModal(weather, 'f')
+        })
+        .catch((err) => {
+            console.log(err)
+        })
     }
 }
 
@@ -52,3 +58,4 @@ function _removeChildren(location) {
         location.removeChild(location.lastChild)
     }
 }
+

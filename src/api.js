@@ -33,9 +33,12 @@ function _makeCityRequest(values) {
             throw new Error('Too many values for City Request passed.')
         }
         let requestValues = values.reduce((reqStr, value) => {
-            if (reqStr === ''){
+            if (reqStr === '') {
                 return reqStr += value
-            } else {
+            } else if (value === '') {
+                return reqStr
+            }
+            else {
                 return reqStr += ',' + value
             }
         }, '')
@@ -47,16 +50,4 @@ function _makeCityRequest(values) {
         console.log(err)
         return ""
     }
-}
-
-function kelvinToCelcius(k) {
-    return (k - 273.15)
-}
-
-function celciusToF(c) {
-    return ((c * (9.0/5.0)) + 32)
-}
-
-function fahrenheitToC(f) {
-    return ((f - 32) / (9.0/5.0))
 }
