@@ -1,1 +1,271 @@
-(()=>{"use strict";function t(t){return(t-273.15).toFixed(2)}function e(e){return(n=t(e),1.8*n+32).toFixed(2);var n}function n(n,r="f"){let o,i=document.getElementById("weather-modal");i?(function(t){for(;t.firstChild;)t.removeChild(t.lastChild)}(i),o=i):o=document.querySelector("main"),console.log(n);const c=function(t,e){let n=document.createElement("div");n.setAttribute("id","weather-modal");let r=document.createElement("h1");r.textContent=t.type,n.appendChild(r);let o=document.createElement("h2");o.textContent=function(t){let e=t.split("");e[0]=e[0].toUpperCase();try{for(let t=0;t<e.length;t+=1)" "===e[t]&&(e[t+1]=e[t+1].toUpperCase())}catch(t){console.log(t)}return e.join("")}(t.desc),n.appendChild(o);let i=document.createElement("div");i.setAttribute("id","weather-data"),n.appendChild(i);let c=document.createElement("p"),a="";return a+=`The current temperature is ${e(t.temp)}°.<br>`,a+=`It feels like ${e(t.feels_like)}° though.<br>`,a+=`It will get up to ${e(t.temp_max)}° today.<br>`,a+=`While also getting down to ${e(t.temp_min)}°.<br>`,c.innerHTML=a,i.appendChild(c),n}(n,function(n){try{if("c"===n)return t;if("f"===n)return e;throw new Error("Unknown unit string passed.")}catch(t){console.log(t)}}(r));o.appendChild(c)}function r(t){const e=t.currentTarget.parentNode,r=e.city.value,o=e.state.value,i=e.country.value;""===r?alert("You need a city name."):""!=o&&""===i?alert("You need a country code."):async function(t){let e=await fetch(t,{mode:"cors"}),n=await e.json(),r={};return r=n.main,r.type=n.weather[0].main,r.desc=n.weather[0].description,r}(function(t,...e){try{if("city"===t)return function(t){try{if(0===t.length)throw new Error("Needed values for City Request not passsed.");if(t.length>3)throw new Error("Too many values for City Request passed.");return"https://api.openweathermap.org/data/2.5/weather?q="+t.reduce(((t,e)=>""===t?t+e:""===e?t:t+","+e),"")+"&appid=09d94b3ecf354f2c118344d82e6361ba"}catch(t){return console.log(t),""}}(e);throw new Error("No matching endpoint of that type.")}catch(t){return console.log(t),""}}("city",r,o,i)).then((t=>{n(t,"f")})).catch((t=>{console.log(t)}))}document.querySelector("main"),function(t){const e=function(){const t=document.createElement("div");t.setAttribute("id","form-container");const e=document.createElement("form");let n=document.createElement("label");n.setAttribute("for","city"),n.textContent="City:",e.appendChild(n);let r=document.createElement("input");r.setAttribute("type","text"),r.setAttribute("id","city"),r.setAttribute("name","city"),e.appendChild(r);let o=document.createElement("label");o.setAttribute("for","state"),o.textContent="State:",e.appendChild(o);let i=document.createElement("input");i.setAttribute("type","text"),i.setAttribute("id","state"),i.setAttribute("name","state"),e.appendChild(i);let c=document.createElement("label");c.setAttribute("for","country"),c.textContent="Country:",e.appendChild(c);let a=document.createElement("input");a.setAttribute("type","text"),a.setAttribute("id","country"),a.setAttribute("name","country"),e.appendChild(a);let u=document.createElement("button");return u.setAttribute("type","button"),u.setAttribute("id","form-submit"),u.textContent="Go!",e.appendChild(u),t.appendChild(e),t}();t.appendChild(e),document.getElementById("form-submit").addEventListener("click",r)}(document.querySelector("main"))})();
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+
+;// CONCATENATED MODULE: ./src/temperature.js
+function kelvinToC(k) {
+    return (k - 273.15).toFixed(2)
+}
+
+function kelvinToF(k) {
+    let c = kelvinToC(k)
+    return celciusToF(c).toFixed(2)
+}
+
+function celciusToF(c) {
+    return ((c * (9.0/5.0)) + 32)
+}
+
+function fahrenheitToC(f) {
+    return ((f - 32) / (9.0/5.0))
+}
+;// CONCATENATED MODULE: ./src/unit.js
+
+
+function getUnitFunction(unit) {
+    try {
+        if (unit === 'C') {
+            return kelvinToC
+        } else if (unit === 'F') {
+            return kelvinToF
+        } else {
+            throw new Error('Unknown unit string passed.')
+        }
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+;// CONCATENATED MODULE: ./src/string.js
+function capitalCase(phrase) {
+    let capitalized = phrase.split('')
+    capitalized[0] = capitalized[0].toUpperCase()
+    try {
+        for (let i = 0; i < capitalized.length; i += 1) {
+            if (capitalized[i] === ' ') {
+                capitalized[i + 1] = capitalized[i + 1].toUpperCase()
+            }
+        }
+    }
+    catch (err) {
+        console.log(err)
+        // return (phrase)
+    }
+    return capitalized.join('')
+}
+;// CONCATENATED MODULE: ./src/modal.js
+
+function getModal(weather, conversion, unit) {
+    let container = document.createElement('div')
+    container.setAttribute('id', 'weather-modal')
+
+    let title = document.createElement('h1')
+    title.textContent = weather.type
+    container.appendChild(title)
+
+    let subtitle = document.createElement('h2')
+
+    subtitle.textContent = capitalCase(weather.desc)
+    container.appendChild(subtitle)
+
+    let dataContainer = document.createElement('div')
+    dataContainer.setAttribute('id', 'weather-data')
+    container.appendChild(dataContainer)
+
+    let data = document.createElement('p')
+    let dataString = ''
+    dataString += `The current temperature is <span class='temp'>${conversion(weather.temp)}°${unit}</span>.<br>`
+    dataString += `It feels like <span class='temp'>${conversion(weather.feels_like)}°${unit}</span> though.<br>`
+    dataString += `It will get up to <span class='temp'>${conversion(weather.temp_max)}°${unit}</span> today.<br>`
+    dataString += `While also getting down to <span class='temp'>${conversion(weather.temp_min)}°${unit}</span>.<br>`
+    data.innerHTML = dataString
+    dataContainer.appendChild(data)
+    
+    let unitToggle = document.createElement('button')
+    unitToggle.setAttribute('id', 'unit-toggle')
+    if (unit === 'F') {
+        unitToggle.textContent = '°C'
+    } else {
+        unitToggle.textContent = '°F'
+    }
+    unitToggle.type = 'button'
+    container.appendChild(unitToggle)
+    return container
+}
+;// CONCATENATED MODULE: ./src/form.js
+function getLocationForm() {
+    const formContainer = document.createElement('div')
+    formContainer.setAttribute('id', 'form-container')
+    const form = document.createElement('form')
+    
+    let cityLabel = document.createElement('label')
+    cityLabel.setAttribute('for', 'city')
+    cityLabel.textContent = 'City:'
+    form.appendChild(cityLabel)
+    let cityInput = document.createElement('input')
+    cityInput.setAttribute('type', 'text')
+    cityInput.setAttribute('id', 'city')
+    cityInput.setAttribute('name', 'city')
+    form.appendChild(cityInput)
+
+    let stateLabel= document.createElement('label')
+    stateLabel.setAttribute('for', 'state')
+    stateLabel.textContent = 'State:'
+    form.appendChild(stateLabel)
+    let stateInput = document.createElement('input')
+    stateInput.setAttribute('type', 'text')
+    stateInput.setAttribute('id', 'state')
+    stateInput.setAttribute('name', 'state')
+    form.appendChild(stateInput)
+
+    let countryLabel= document.createElement('label')
+    countryLabel.setAttribute('for', 'country')
+    countryLabel.textContent = 'Country:'
+    form.appendChild(countryLabel)
+    let countryInput = document.createElement('input')
+    countryInput.setAttribute('type', 'text')
+    countryInput.setAttribute('id', 'country')
+    countryInput.setAttribute('name', 'country')
+    form.appendChild(countryInput)
+
+    let submitButton = document.createElement('button')
+    submitButton.setAttribute('type', 'button')
+    submitButton.setAttribute('id', 'form-submit') 
+    submitButton.textContent = 'Go!'
+    form.appendChild(submitButton)
+
+    formContainer.appendChild(form)
+    return formContainer
+}
+;// CONCATENATED MODULE: ./src/secrets.js
+const apiKey = "09d94b3ecf354f2c118344d82e6361ba"
+
+;// CONCATENATED MODULE: ./src/api.js
+
+
+async function getWeatherData(request) {
+    let response = await fetch(request, { mode: 'cors' })
+    let query = await response.json()
+    let weatherData = {}
+    weatherData = query.main
+    weatherData['type'] = query.weather[0].main
+    weatherData['desc'] = query.weather[0].description
+    return weatherData
+}
+
+function makeRequest(endpoint, ...values) {
+    try {
+        if (endpoint === "city"){
+            return _makeCityRequest(values)
+        } else {
+            throw new Error('No matching endpoint of that type.')
+        }
+    }
+    catch (err) {
+        console.log(err)
+        return ''
+    }
+    
+}
+
+function _makeCityRequest(values) {
+    try {
+        if (values.length === 0) {
+            throw new Error('Needed values for City Request not passsed.')
+        } else if (values.length > 3) {
+            throw new Error('Too many values for City Request passed.')
+        }
+        let requestValues = values.reduce((reqStr, value) => {
+            if (reqStr === '') {
+                return reqStr += value
+            } else if (value === '') {
+                return reqStr
+            }
+            else {
+                return reqStr += ',' + value
+            }
+        }, '')
+        let requestBase = 'https://api.openweathermap.org/data/2.5/weather?q='
+        let requestTail = `&appid=${apiKey}`
+        return requestBase + requestValues + requestTail
+    }
+    catch (err) {
+        console.log(err)
+        return ""
+    }
+}
+
+;// CONCATENATED MODULE: ./src/gui.js
+
+
+
+
+
+function renderPage(location) {
+    const main = document.querySelector('main')
+    renderLocationForm(main)
+}
+
+function renderWeatherModal(weather, unit = 'F' ) {
+    let currentModal = document.getElementById('weather-modal')
+    let location
+    if (currentModal) {
+        _removeChildren(currentModal)
+        location = currentModal
+    } else {
+        location = document.querySelector('main')
+    }
+    console.log(weather)
+    const conversion = getUnitFunction(unit)   
+    const modal = getModal(weather, conversion, unit)
+    location.appendChild(modal)
+    let toggle = modal.querySelector('button')
+    toggle.addEventListener('click', () => {
+        let u = (unit === 'F' ? 'C': 'F')
+        renderWeatherModal(weather, u)
+    })
+}
+
+function renderLocationForm(location) {    
+    const form = getLocationForm()
+    location.appendChild(form)
+    const submit = document.getElementById('form-submit')
+    submit.addEventListener('click', submitClickHandler)
+}
+
+function submitClickHandler(e) {
+    const form = e.currentTarget.parentNode
+    // get information for request
+    const endpoint = 'city'
+    const city = form.city.value
+    const state = form.state.value
+    const country = form.country.value
+    if (city === '') {
+        alert('You need a city name.')
+    } else if (state != '' && country === '') {
+        alert('You need a country code.')
+    } else {
+        const request = makeRequest(endpoint, city, state, country)
+        getWeatherData(request)
+        .then((weather) => {
+            renderWeatherModal(weather, 'F')
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    }
+}
+
+function _removeChildren(location) {
+    while(location.firstChild) {
+        location.removeChild(location.lastChild)
+    }
+}
+
+
+;// CONCATENATED MODULE: ./src/index.js
+
+
+const root = document.querySelector('main')
+renderPage(root)
+/******/ })()
+;

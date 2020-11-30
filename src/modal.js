@@ -1,5 +1,5 @@
 import { capitalCase } from './string'
-export function getModal(weather, conversion) {
+export function getModal(weather, conversion, unit) {
     let container = document.createElement('div')
     container.setAttribute('id', 'weather-modal')
 
@@ -18,12 +18,21 @@ export function getModal(weather, conversion) {
 
     let data = document.createElement('p')
     let dataString = ''
-    dataString += `The current temperature is ${conversion(weather.temp)}°.<br>`
-    dataString += `It feels like ${conversion(weather.feels_like)}° though.<br>`
-    dataString += `It will get up to ${conversion(weather.temp_max)}° today.<br>`
-    dataString += `While also getting down to ${conversion(weather.temp_min)}°.<br>`
+    dataString += `The current temperature is <span class='temp'>${conversion(weather.temp)}°${unit}</span>.<br>`
+    dataString += `It feels like <span class='temp'>${conversion(weather.feels_like)}°${unit}</span> though.<br>`
+    dataString += `It will get up to <span class='temp'>${conversion(weather.temp_max)}°${unit}</span> today.<br>`
+    dataString += `While also getting down to <span class='temp'>${conversion(weather.temp_min)}°${unit}</span>.<br>`
     data.innerHTML = dataString
     dataContainer.appendChild(data)
     
+    let unitToggle = document.createElement('button')
+    unitToggle.setAttribute('id', 'unit-toggle')
+    if (unit === 'F') {
+        unitToggle.textContent = '°C'
+    } else {
+        unitToggle.textContent = '°F'
+    }
+    unitToggle.type = 'button'
+    container.appendChild(unitToggle)
     return container
 }

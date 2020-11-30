@@ -8,7 +8,7 @@ export function renderPage(location) {
     renderLocationForm(main)
 }
 
-export function renderWeatherModal(weather, unit = 'f' ) {
+export function renderWeatherModal(weather, unit = 'F' ) {
     let currentModal = document.getElementById('weather-modal')
     let location
     if (currentModal) {
@@ -19,8 +19,13 @@ export function renderWeatherModal(weather, unit = 'f' ) {
     }
     console.log(weather)
     const conversion = getUnitFunction(unit)   
-    const modal = getModal(weather, conversion)
+    const modal = getModal(weather, conversion, unit)
     location.appendChild(modal)
+    let toggle = modal.querySelector('button')
+    toggle.addEventListener('click', () => {
+        let u = (unit === 'F' ? 'C': 'F')
+        renderWeatherModal(weather, u)
+    })
 }
 
 export function renderLocationForm(location) {    
@@ -45,7 +50,7 @@ function submitClickHandler(e) {
         const request = makeRequest(endpoint, city, state, country)
         getWeatherData(request)
         .then((weather) => {
-            renderWeatherModal(weather, 'f')
+            renderWeatherModal(weather, 'F')
         })
         .catch((err) => {
             console.log(err)
